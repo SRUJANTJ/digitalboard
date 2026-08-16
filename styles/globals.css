@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #f5f1e6;
+}
+
+body {
+  background-color: var(--paper);
+  color: #21232b;
+  font-family: "Inter", sans-serif;
+  background-image:
+    radial-gradient(rgba(33, 35, 43, 0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* A small pushpin used on every notice card */
+.pin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, #f4d67a, #c79a2e 65%, #8a6a1c 100%);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.35);
+  z-index: 10;
+}
+
+.pin::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Rubber-stamp style urgency badge */
+.stamp {
+  font-family: "IBM Plex Mono", monospace;
+  letter-spacing: 0.08em;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 3px;
+  padding: 2px 8px;
+  transform: rotate(-3deg);
+  display: inline-block;
+}
+
+/* Focus visibility for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #1d2b4f;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

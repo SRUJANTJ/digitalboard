@@ -1,0 +1,29 @@
+1. Edit prisma/schema.prisma
+
+Change:
+
+prisma
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+to:
+
+prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+2. Edit .env
+
+Replace DATABASE_URL with your Neon connection string (Neon dashboard → your project → Connection string, use the pooled one — it already includes ?sslmode=require). Also set JWT_SECRET to something random if you haven't already, since the placeholder isn't safe outside local dev.
+
+3. Regenerate and push
+
+powershell
+npx prisma generate
+npm run db:push
+npm run seed

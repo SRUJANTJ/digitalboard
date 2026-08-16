@@ -1,0 +1,55 @@
+// Prisma schema — right now this points at a local SQLite file (db.sqlite)
+// via DATABASE_URL in the .env file already included in this project (so
+// it works out of the box — nothing to copy or configure).
+//
+// Note: Prisma has to know the *dialect* (sqlite vs postgresql) at
+// `generate` time via the `provider` line below — that part can't be
+// controlled by an env var, only the `url` can. So switching databases is:
+//
+//   1. Change `provider` below from "sqlite" to "postgresql"
+//   2. Change DATABASE_URL in .env to your Postgres connection string
+//      (Neon dashboard -> your project -> Connection string)
+//   3. Run: npx prisma generate && npm run db:push
+//
+// After that, moving between different Postgres hosts (Neon -> Supabase ->
+// RDS -> Railway) really is a DATABASE_URL-only change in .env, since the
+// provider stays "postgresql" — no schema or code edits at all.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  role         String // "admin" | "student"
+  department   String?
+  semester     Int?
+  createdAt    DateTime @default(now()) @map("created_at")
+  notices      Notice[]
+
+  @@map("users")
+}
+
+model Notice {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  department String   @default("ALL")
+  semester   Int?
+  urgency    String   @default("medium") // "low" | "medium" | "high"
+  category   String   @default("general") // "general" | "academic" | "festive" | "event" | "exam" | "holiday"
+  createdBy  Int      @map("created_by")
+  author     User     @relation(fields: [createdBy], references: [id])
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("notices")
+}
