@@ -4,6 +4,7 @@ import { getUserFromReq } from "../lib/auth";
 
 export async function getServerSideProps({ req }) {
   const user = getUserFromReq(req);
+
   if (user) {
     return {
       redirect: {
@@ -12,27 +13,47 @@ export async function getServerSideProps({ req }) {
       },
     };
   }
+
   return { props: {} };
 }
 
 export default function Login() {
   const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     setError("");
+
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedUsername || !trimmedPassword) {
+      setError("Username and password are required.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: trimmedUsername,
+          password: trimmedPassword,
+        }),
       });
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -52,7 +73,9 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="text-center mb-6">
-          <span className="stamp text-navy border-navy text-xs">digital notice board</span>
+          <span className="stamp text-navy border-navy text-xs">
+            digital notice board
+          </span>
         </div>
 
         <div className="relative bg-card rounded-sm shadow-pin px-8 pt-10 pb-8 border border-ink/5">
@@ -61,15 +84,18 @@ export default function Login() {
           <h1 className="font-display text-3xl font-semibold text-navy text-center leading-tight">
             Digital Notice Board
           </h1>
+
           <p className="text-ink/50 text-sm text-center mt-1 mb-8">
             Sign in to read what's pinned up
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Username */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wide text-ink/60 mb-1.5">
                 Username
               </label>
+
               <input
                 type="text"
                 value={username}
@@ -79,17 +105,30 @@ export default function Login() {
                 autoFocus
               />
             </div>
+
+            {/* Password */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wide text-ink/60 mb-1.5">
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border-b-2 border-ink/15 bg-transparent px-1 py-2 text-ink focus:outline-none focus:border-navy transition-colors"
-                required
-              />
+
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full border-b-2 border-ink/15 bg-transparent px-1 py-2 pr-16 text-ink focus:outline-none focus:border-navy transition-colors"
+                  required
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-xs font-semibold text-navy hover:text-navy-light transition-colors"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
 
             {error && (
@@ -104,7 +143,8 @@ export default function Login() {
               {loading && (
                 <span className="h-4 w-4 border-2 border-paper border-t-transparent rounded-full animate-spin" />
               )}
-              {loading ? "Signing in\u2026" : "Sign in"}
+
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
@@ -112,6 +152,7 @@ export default function Login() {
             <p className="font-semibold text-ink/60 mb-1.5 uppercase tracking-wide text-[11px]">
               Test accounts
             </p>
+
             <p>admin / admin123</p>
             <p>student1 / student123</p>
           </div>
