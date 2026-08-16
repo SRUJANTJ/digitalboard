@@ -20,7 +20,7 @@ generator client {
 }
 
 datasource db {
-  provider = "env("Provider")"
+  provider = env("Provider")
   url      = env("DATABASE_URL")
 }
 
