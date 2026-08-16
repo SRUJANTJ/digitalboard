@@ -15,7 +15,11 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
+or
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
 
 2. Edit .env
 
